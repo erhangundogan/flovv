@@ -33,7 +33,7 @@ module.exports = (env, argv) => {
           exclude: /node_modules/,
           use: [
             'babel-loader',
-            //'eslint-loader'
+            'eslint-loader'
           ]
         },
         {
