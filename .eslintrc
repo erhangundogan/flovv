@@ -2,11 +2,14 @@
   "extends": ["airbnb"],
   "plugins": ["jest"],
   "rules": {
-    "arrow-body-style": ["error", "as-needed"],
+    "no-unused-vars": "off",
+    "object-curly-newline": "off",
+    "arrow-body-style": "off",
     "comma-dangle": ["error", "only-multiline"],
     "import/no-unresolved": "off",
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "quotes": ["error", "single"],
+    "template-curly-spacing": "off",
     "key-spacing": ["error", {
       "beforeColon": false,
       "afterColon": true
@@ -29,7 +32,8 @@
       "component": true,
       "html": true
     }],
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "react/jsx-props-no-spreading": 0
   },
   "env": {
     "node": true,

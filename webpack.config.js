@@ -1,10 +1,9 @@
-const webpack = require('webpack');
 const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, argv) => {
-  const { mode } = argv;
+  const { mode, host } = argv;
   process.env.NODE_ENV = env || mode;
   const isProduction = process.env.NODE_ENV === 'production';
 
@@ -13,17 +12,17 @@ module.exports = (env, argv) => {
     mode: isProduction ? 'production' : 'development',
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: '[hash].js',
-      chunkFilename: '[name].[hash].js'
+      filename: isProduction ? 'flovv.min.js' : 'flovv.js'
     },
     target: 'web',
     resolve: {
-      extensions: ['.ts', '.tsx', '.css', '.js', '.json'],
-      // Fix webpack's default behavior to not load packages with jsnext:main module
-      // (jsnext:main directs not usually distributable es6 format, but es6 sources)
+      extensions: ['.js', '.json', '.css'],
       mainFields: ['module', 'browser', 'main'],
       alias: {
-        components: path.resolve(__dirname, 'src/components/')
+        '@components': path.resolve(__dirname, 'src', 'components'),
+        '@helpers': path.resolve(__dirname, 'src', 'helpers'),
+        '@hooks': path.resolve(__dirname, 'src', 'hooks'),
+        '@constants': path.resolve(__dirname, 'src', 'constants')
       }
     },
     module: {
@@ -33,7 +32,7 @@ module.exports = (env, argv) => {
           exclude: /node_modules/,
           use: [
             'babel-loader',
-            'eslint-loader'
+            //'eslint-loader'
           ]
         },
         {
@@ -46,26 +45,18 @@ module.exports = (env, argv) => {
       ]
     },
     optimization: {
-      splitChunks: {
-        name: true,
-        cacheGroups: {
-          commons: {
-            chunks: 'initial',
-            minChunks: 2
-          },
-          vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            chunks: 'all',
-            filename: 'vendor.[contenthash].js',
-            priority: -10
+      minimizer: [
+        new TerserWebpackPlugin({
+          terserOptions: {
+            output: {
+              comments: false,
+            }
           }
-        }
-      },
-      runtimeChunk: true
+        })
+      ]
     },
-    devtool: isProduction ? 'hidden-source-map' : 'cheap-module-eval-source-map',
+    devtool: isProduction ? 'hidden-source-map' : 'source-map',
     plugins: [
-      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: 'flovv',
         template: './public/index.html'
@@ -74,10 +65,9 @@ module.exports = (env, argv) => {
     devServer: {
       contentBase: './dist',
       disableHostCheck: true,
-      host: "0.0.0.0",
       port: 9001,
-      public: "localhost:9001",
+      public: `${host}:9001`,
+      historyApiFallback: true
     }
   };
 };
-

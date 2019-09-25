@@ -1,0 +1,37 @@
+.navigation-bar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: cornflowerblue;
+  z-index: 1;
+  height: 50px;
+}
+
+.navigation {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 10px;
+}
+
+.navigation a {
+  color: white;
+  text-decoration: none;
+  margin-right: 20px;
+  padding: 5px;
+}
+.navigation .active {
+  background-color: white;
+  color: cornflowerblue;
+  border-radius: 5px;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  overflow: scroll;
+  position: relative;
+}
