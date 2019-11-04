@@ -1,66 +1,52 @@
-import React, { useEffect } from 'react';
-import queryString from 'query-string';
-import useDesk from '@hooks/useDesk';
+import React, { useEffect, useReducer } from 'react';
 import useDrawer from '@hooks/useDrawer';
 import useDraggable from '@hooks/useDraggable';
-import { Drawer } from '@components';
+import {
+  DrawingContext,
+  drawingReducer,
+  initialDrawingState
+} from '@context/Drawing';
+import { SVGDesk, ToolsPanel } from '@components';
 import './default.css';
 
-const Desk = ({ location }) => {
-  const params = queryString.parse(location.search);
+const Desk = () => {
+  const [state, dispatch] = useReducer(drawingReducer, initialDrawingState);
 
-  const desk = useDesk(params.id);
+  // useDrawer
   const {
-    drawingState,
-    items,
-    onClick,
-    onKeyDown
-  } = useDrawer(desk.id);
-  const {
-    onMouseDown,
-    onMouseMove,
-    onMouseUp
-  } = useDraggable(items);
-
-  useEffect(() => {
-    window.history.pushState('', '', `?id=${ desk.id }`);
-  }, []);
-
+    drawingState, onClick, onKeyDown, onMouseEnter, onMouseLeave
+  } = useDrawer({
+    deskId: state.desk.id,
+    selectedShape: state.tools.selected,
+    shapes: state.shapes,
+    dispatch
+  });
   const { hoverId, selectedId } = drawingState;
 
+  // useDraggable
+  const { onMouseDown, onMouseMove, onMouseUp } = useDraggable(state.shapes);
+
+  useEffect(() => {
+    window.history.pushState('', '', `?id=${ state.desk.id }`);
+  }, []);
+
   return (
-    <svg
-      id={ desk.id }
-      onClick={ onClick }
-      onKeyDown={ onKeyDown }
-      onMouseDown={ onMouseDown }
-      onMouseMove={ onMouseMove }
-      onMouseUp={ onMouseUp }
-      className="desk"
-      tabIndex="0"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <g className="standard-items" transform="translate(0.5,0.5)">
-        <Drawer
-          state="standard"
-          items={ items.filter(
-            ({ props: { id } }) => (id !== hoverId) && (id !== selectedId)
-          ) }
+    <>
+      <DrawingContext.Provider value={ [state, dispatch] }>
+        <ToolsPanel onMouseEnter={ onMouseEnter } onMouseLeave={ onMouseLeave } />
+        <SVGDesk { ...{
+          shapes: state.shapes,
+          deskId: state.desk.id,
+          hoverId,
+          selectedId,
+          onClick,
+          onKeyDown,
+          onMouseDown,
+          onMouseMove,
+          onMouseUp } }
         />
-      </g>
-      <g className="hover-items" transform="translate(0.5,0.5)">
-        <Drawer
-          state="hover"
-          items={ items.filter(({ props: { id } }) => (id === hoverId)) }
-        />
-      </g>
-      <g className="selected-items" transform="translate(0.5,0.5)">
-        <Drawer
-          state="selected"
-          items={ items.filter(({ props: { id } }) => (id === selectedId)) }
-        />
-      </g>
-    </svg>
+      </DrawingContext.Provider>
+    </>
   );
 };
 

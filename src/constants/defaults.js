@@ -2,17 +2,16 @@ const defaults = {
   rect: {
     standard: {
       pointerEvents: 'all',
-      width: 80,
-      height: 40,
-      draggable: true
-    },
-    hover: {
-      pointerEvents: 'none',
-      draggable: true
-    },
-    selected: {
-      pointerEvents: 'none',
-      draggable: true
+      width: 120,
+      height: 80,
+      item: 'rect'
+    }
+  },
+  circle: {
+    standard: {
+      pointerEvents: 'all',
+      r: 50,
+      item: 'circle'
     }
   },
   grid: {

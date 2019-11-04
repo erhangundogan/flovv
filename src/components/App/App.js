@@ -20,7 +20,7 @@ const App = () => {
         </nav>
       </div>
       <Router className="container">
-        <Home path="/" pr={ 123 } />
+        <Home path="/" />
         <Desk path="desk" />
       </Router>
     </>

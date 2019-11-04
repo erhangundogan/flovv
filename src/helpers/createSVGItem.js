@@ -4,7 +4,12 @@ const createSVGItem = ({ elementType, props }) => {
   switch (elementType) {
     case 'rect': {
       return (
-        <rect { ...props } />
+        <rect className="draggable" { ...props } />
+      );
+    }
+    case 'circle': {
+      return (
+        <circle className="draggable" { ...props } cx={ props.x } cy={ props.y } />
       );
     }
     // no default

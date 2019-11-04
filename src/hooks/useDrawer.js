@@ -1,11 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import nanoid from 'nanoid';
 import defaults from '@constants/defaults';
 import getMousePosition from '@helpers/getMousePosition';
 
-const useDrawer = (deskId) => {
-  const [items, setItems] = useState([]);
+const useDrawer = ({ deskId, selectedShape, shapes, dispatch }) => {
   const [drawingState, setDrawingState] = useState({});
+
+  useEffect(() => {
+    return () => {
+      shapes.forEach((shape) => {
+        if (shape.props && shape.props.onMouseEnter) {
+          window.removeEventListener('mouseenter', shape.props.onMouseEnter);
+        }
+        if (shape.props && shape.props.onMouseLeave) {
+          window.removeEventListener('mouseleave', shape.props.onMouseLeave);
+        }
+      });
+    };
+  }, [shapes]);
 
   const createItem = ({ itemType, elementType, props }) => {
     const id = nanoid();
@@ -22,62 +34,59 @@ const useDrawer = (deskId) => {
 
   const onMouseEnter = (event) => {
     event.persist();
-    setDrawingState((state) => ({
-      ...state,
-      ...{ hoverId: event.target.id }
-    }));
+    setDrawingState((state) => ({ ...state, hoverId: event.target.id }));
   };
 
-  const onMouseLeave = (event) => {
-    event.persist();
-    setDrawingState((state) => ({
-      ...state,
-      ...{ hoverId: null }
-    }));
+  const onMouseLeave = () => {
+    setDrawingState((state) => ({ ...state, hoverId: null }));
   };
 
   const onClick = (event) => {
     const { target: { id } } = event;
 
     if (id !== deskId) {
-      setDrawingState((state) => ({
-        ...state,
-        ...{ selectedId: id }
-      }));
+      setDrawingState({ ...drawingState, selectedId: id });
+      event.preventDefault();
+      event.stopPropagation();
       return;
     }
 
-    const elementType = 'rect';
-    const { x, y } = getMousePosition(event);
     const item = createItem({
-      elementType,
+      elementType: selectedShape,
       itemType: 'standard',
       props: {
         onMouseEnter,
         onMouseLeave,
-        x,
-        y
-      },
+        ...getMousePosition(event)
+      }
     });
 
-    setItems([...items, item]);
+    dispatch({ type: 'DRAWING/ADD', shape: item });
   };
 
   const onKeyDown = (event) => {
-    if (event.key !== 'Backspace') {
-      return;
-    }
-    const { selectedId } = drawingState;
-    if (selectedId) {
-      setItems(items.filter(({ props: { id } }) => id !== selectedId));
+    switch (event.key) {
+      case 'Backspace': {
+        const { selectedId } = drawingState;
+        if (selectedId) {
+          dispatch({ type: 'DRAWING/REMOVE', id: selectedId });
+        }
+        break;
+      }
+      case 'Escape': {
+        setDrawingState({ ...drawingState, selectedId: null });
+        break;
+      }
+      // no default
     }
   };
 
   return {
     drawingState,
-    items,
     onClick,
-    onKeyDown
+    onKeyDown,
+    onMouseEnter,
+    onMouseLeave
   };
 };
 
