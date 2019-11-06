@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
     mode: isProduction ? 'production' : 'development',
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: isProduction ? 'flovv.min.js' : 'flovv.js'
+      filename: 'flovv.js'
     },
     target: 'web',
     resolve: {
@@ -56,7 +56,7 @@ module.exports = (env, argv) => {
         })
       ]
     },
-    devtool: isProduction ? 'hidden-source-map' : 'source-map',
+    devtool: isProduction ? false : 'source-map',
     plugins: [
       new HtmlWebpackPlugin({
         title: 'flovv',

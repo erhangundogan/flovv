@@ -1,12 +1,13 @@
 module.exports = {
-  collectCoverage: true,
+  collectCoverage: false,
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
-    '**/!(*.test).js',
+    '**/__tests__/!(*.test).js',
     '!index.js'
   ],
   coverageReporters: ['text'],
-  verbose: true,
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.js?$',
+  verbose: false,
   moduleFileExtensions: ['js'],
   rootDir: 'src'
 };

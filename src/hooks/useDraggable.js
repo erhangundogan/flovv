@@ -1,12 +1,18 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import getMousePosition from '@helpers/getMousePosition';
 
-const useDraggable = (items) => {
-  const [selected, setSelected] = useState(null);
+const useDraggable = (shapes) => {
+  const [dragItem, setDragItem] = useState(null);
+  const [resizeItem, setResizeItem] = useState(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  const setPosition = useCallback((event) => {
-    const [selectedItem] = items.filter((item) => item.props.id === selected.id);
+  useEffect(() => {
+    console.log('dragItem:', dragItem);
+    console.log('resizeItem:', resizeItem);
+  }, [dragItem, resizeItem]);
+
+  const setDragPosition = useCallback((event) => {
+    const [selectedItem] = shapes.filter((item) => item.props.id === dragItem.id);
 
     if (selectedItem) {
       const { x, y } = getMousePosition(event);
@@ -16,49 +22,93 @@ const useDraggable = (items) => {
       selectedItem.props.x = posX;
       selectedItem.props.y = posY;
     }
-  }, [items, selected]);
+  }, [shapes, dragItem]);
 
   const onMouseDown = (event) => {
     const selectedItem = event.target;
     const className = selectedItem.getAttributeNS(null, 'class');
 
-    if (className && className.includes('draggable')) {
-      const offsetPosition = getMousePosition(event);
-      offsetPosition.x -= parseFloat(selectedItem.getAttributeNS(null, 'x'));
-      offsetPosition.y -= parseFloat(selectedItem.getAttributeNS(null, 'y'));
+    if (className) {
+      if (className.includes('draggable')) {
+        setResizeItem(null);
+        setDragItem(selectedItem);
 
-      setOffset(offsetPosition);
-      setSelected(selectedItem);
+        const offsetPosition = getMousePosition(event);
+        offsetPosition.x -= parseFloat(selectedItem.getAttributeNS(null, 'x'));
+        offsetPosition.y -= parseFloat(selectedItem.getAttributeNS(null, 'y'));
+        setOffset(offsetPosition);
+      } else if (className.includes('resizable')) {
+        setDragItem(null);
+
+        const parentItemId = selectedItem.attributes['data-parent-id'].value;
+        const resizePoint = selectedItem.attributes['data-resize'].value;
+        setResizeItem(document.getElementById(parentItemId));
+
+        const offsetPosition = getMousePosition(event);
+        offsetPosition.x -= parseFloat(selectedItem.getAttributeNS(null, 'x'));
+        offsetPosition.y -= parseFloat(selectedItem.getAttributeNS(null, 'y'));
+        setOffset(offsetPosition);
+      }
     }
   };
 
   const onMouseUp = (event) => {
-    if (selected) {
-      setPosition(event);
-      setSelected(null);
+    if (dragItem) {
+      setDragPosition(event);
+      setDragItem(null);
+    }
+  };
+
+  const dragMove = (event) => {
+    const { x, y } = getMousePosition(event);
+    const posX = x - offset.x;
+    const posY = y - offset.y;
+    const item = dragItem.getAttributeNS(null, 'item');
+    let xString = 'x';
+    let yString = 'y';
+
+    if (item === 'circle') {
+      xString = 'cx';
+      yString = 'cy';
+    }
+
+    if (posX) {
+      dragItem.setAttributeNS(null, xString, posX);
+    }
+    if (posY) {
+      dragItem.setAttributeNS(null, yString, posY);
+    }
+  };
+
+  const resizeMove = (event) => {
+    const { x, y } = getMousePosition(event);
+    const posX = x - offset.x;
+    const posY = y - offset.y;
+
+    const item = resizeItem.getAttributeNS(null, 'item');
+
+    if (item === 'rect') {
+      if (posX) {
+        resizeItem.setAttributeNS(null, 'width', posX);
+      }
+      if (posY) {
+        resizeItem.setAttributeNS(null, 'height', posY);
+      }
+    } else if (item === 'circle') {
+      if (posX) {
+        resizeItem.setAttributeNS(null, 'r', posX);
+      }
+      if (posY) {
+        resizeItem.setAttributeNS(null, 'r', posY);
+      }
     }
   };
 
   const onMouseMove = (event) => {
-    if (selected) {
-      const { x, y } = getMousePosition(event);
-      const posX = x - offset.x;
-      const posY = y - offset.y;
-      const item = selected.getAttributeNS(null, 'item');
-      let xString = 'x';
-      let yString = 'y';
-
-      if (item === 'circle') {
-        xString = 'cx';
-        yString = 'cy';
-      }
-
-      if (posX) {
-        selected.setAttributeNS(null, xString, posX);
-      }
-      if (posY) {
-        selected.setAttributeNS(null, yString, posY);
-      }
+    if (dragItem) {
+      dragMove(event);
+    } else if (resizeItem) {
+      resizeMove(event);
     }
   };
 

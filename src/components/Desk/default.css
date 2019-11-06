@@ -24,22 +24,21 @@
   cursor: move;
 }
 
-.standard-items {
+.standard-items,
+.selected-items {
   stroke: #333;
-  stroke-linecap: square;
-  stroke-width: 2px;
+  stroke-width: 1px;
 }
 
 .hover-items {
-  stroke-dasharray: 4 6;
-  stroke-linecap: square;
-  stroke-width: 2px;
+  stroke-width: 1px;
   stroke: #ff565b;
 }
 
-.selected-items {
+.selector {
+  fill: none;
   stroke-dasharray: 4 6;
   stroke: #00a8ff;
+  stroke-width: 1px;
   stroke-linecap: square;
-  stroke-width: 2px;
 }

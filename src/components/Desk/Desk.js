@@ -1,33 +1,36 @@
 import React, { useEffect, useReducer } from 'react';
 import useDrawer from '@hooks/useDrawer';
 import useDraggable from '@hooks/useDraggable';
-import {
-  DrawingContext,
-  drawingReducer,
-  initialDrawingState
-} from '@context/Drawing';
+import { DrawingContext, drawingReducer, initialDrawingState } from '@context/Drawing';
 import { SVGDesk, ToolsPanel } from '@components';
 import './default.css';
 
 const Desk = () => {
   const [state, dispatch] = useReducer(drawingReducer, initialDrawingState);
+  const {
+    desk: {
+      id: deskId
+    },
+    tools: {
+      selected: selectedToolShape
+    },
+    shapes,
+    hoverId,
+    selectedId
+  } = state;
+
+  console.log('Desk Render!');
 
   // useDrawer
   const {
-    drawingState, onClick, onKeyDown, onMouseEnter, onMouseLeave
-  } = useDrawer({
-    deskId: state.desk.id,
-    selectedShape: state.tools.selected,
-    shapes: state.shapes,
-    dispatch
-  });
-  const { hoverId, selectedId } = drawingState;
+    onClick, onKeyDown, onMouseEnter, onMouseLeave
+  } = useDrawer({ deskId, selectedToolShape, selectedId, shapes, dispatch });
 
   // useDraggable
-  const { onMouseDown, onMouseMove, onMouseUp } = useDraggable(state.shapes);
+  const { onMouseDown, onMouseMove, onMouseUp } = useDraggable(shapes);
 
   useEffect(() => {
-    window.history.pushState('', '', `?id=${ state.desk.id }`);
+    window.history.pushState('', '', `?id=${ deskId }`);
   }, []);
 
   return (
@@ -35,8 +38,8 @@ const Desk = () => {
       <DrawingContext.Provider value={ [state, dispatch] }>
         <ToolsPanel onMouseEnter={ onMouseEnter } onMouseLeave={ onMouseLeave } />
         <SVGDesk { ...{
-          shapes: state.shapes,
-          deskId: state.desk.id,
+          shapes,
+          deskId,
           hoverId,
           selectedId,
           onClick,

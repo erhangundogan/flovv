@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import nanoid from 'nanoid';
 import defaults from '@constants/defaults';
 import getMousePosition from '@helpers/getMousePosition';
 
-const useDrawer = ({ deskId, selectedShape, shapes, dispatch }) => {
-  const [drawingState, setDrawingState] = useState({});
-
+const useDrawer = ({ deskId, selectedToolShape, selectedId, shapes, dispatch }) => {
   useEffect(() => {
     return () => {
       shapes.forEach((shape) => {
@@ -33,26 +31,25 @@ const useDrawer = ({ deskId, selectedShape, shapes, dispatch }) => {
   };
 
   const onMouseEnter = (event) => {
-    event.persist();
-    setDrawingState((state) => ({ ...state, hoverId: event.target.id }));
+    dispatch({ type: 'DRAWING/HOVER', id: event.target.id });
   };
 
   const onMouseLeave = () => {
-    setDrawingState((state) => ({ ...state, hoverId: null }));
+    dispatch({ type: 'DRAWING/HOVER', id: null });
   };
 
   const onClick = (event) => {
     const { target: { id } } = event;
 
     if (id !== deskId) {
-      setDrawingState({ ...drawingState, selectedId: id });
+      dispatch({ type: 'DRAWING/SELECTED', id });
       event.preventDefault();
       event.stopPropagation();
       return;
     }
 
     const item = createItem({
-      elementType: selectedShape,
+      elementType: selectedToolShape,
       itemType: 'standard',
       props: {
         onMouseEnter,
@@ -67,14 +64,14 @@ const useDrawer = ({ deskId, selectedShape, shapes, dispatch }) => {
   const onKeyDown = (event) => {
     switch (event.key) {
       case 'Backspace': {
-        const { selectedId } = drawingState;
         if (selectedId) {
           dispatch({ type: 'DRAWING/REMOVE', id: selectedId });
+          dispatch({ type: 'DRAWING/SELECTED', id: null });
         }
         break;
       }
       case 'Escape': {
-        setDrawingState({ ...drawingState, selectedId: null });
+        dispatch({ type: 'DRAWING/SELECTED', id: null });
         break;
       }
       // no default
@@ -82,7 +79,6 @@ const useDrawer = ({ deskId, selectedShape, shapes, dispatch }) => {
   };
 
   return {
-    drawingState,
     onClick,
     onKeyDown,
     onMouseEnter,

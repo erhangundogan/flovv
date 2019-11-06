@@ -1,8 +1,9 @@
 import React from 'react';
-import { Drawer } from '@components';
+import { Drawer, BoundingBoxSelector } from '@components';
 
 const SVGDesk = (
-  { shapes,
+  {
+    shapes,
     deskId,
     hoverId,
     selectedId,
@@ -10,7 +11,8 @@ const SVGDesk = (
     onKeyDown,
     onMouseDown,
     onMouseMove,
-    onMouseUp }
+    onMouseUp,
+  },
 ) => {
   return (
     <svg
@@ -25,25 +27,9 @@ const SVGDesk = (
       preserveAspectRatio="xMidYMid meet"
     >
       <g className="standard-items" transform="translate(0.5,0.5)">
-        <Drawer
-          state="standard"
-          items={ shapes.filter(
-            ({ props: { id } }) => (id !== hoverId) && (id !== selectedId),
-          ) }
-        />
+        <Drawer state="standard" items={ shapes } hoverId={ hoverId } />
       </g>
-      <g className="hover-items" transform="translate(0.5,0.5)">
-        <Drawer
-          state="hover"
-          items={ shapes.filter(({ props: { id } }) => (id === hoverId)) }
-        />
-      </g>
-      <g className="selected-items" transform="translate(0.5,0.5)">
-        <Drawer
-          state="selected"
-          items={ shapes.filter(({ props: { id } }) => (id === selectedId)) }
-        />
-      </g>
+      { selectedId && <BoundingBoxSelector selectedId={ selectedId } /> }
     </svg>
   );
 };
