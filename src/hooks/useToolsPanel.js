@@ -4,7 +4,7 @@ import loadDeskFromStorage from '@helpers/loadDeskFromStorage';
 
 const useToolsPanel = ({ state, dispatch, onMouseEnter, onMouseLeave }) => {
   const [selected, setSelected] = useState(
-    () => (state.tools && state.tools.selected) || 'circle'
+    () => (state.tools && state.tools.selected)
   );
 
   const extractProps = useCallback((props) => {
@@ -16,7 +16,6 @@ const useToolsPanel = ({ state, dispatch, onMouseEnter, onMouseLeave }) => {
     } else if (item === 'circle') {
       dimensions = { r };
     }
-
     return { id, item, x, y, ...dimensions };
   }, []);
 

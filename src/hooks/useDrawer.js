@@ -48,19 +48,22 @@ const useDrawer = ({ deskId, selectedToolShape, selectedId, shapes, dispatch }) 
       return;
     }
 
-    const item = createItem({
-      elementType: selectedToolShape,
-      itemType: 'standard',
-      props: {
-        onMouseEnter,
-        onMouseLeave,
-        ...getMousePosition(event)
-      }
-    });
+    if (selectedToolShape) {
+      const item = createItem({
+        elementType: selectedToolShape,
+        itemType: 'standard',
+        props: {
+          onMouseEnter,
+          onMouseLeave,
+          ...getMousePosition(event)
+        }
+      });
 
-    dispatch({ type: 'DRAWING/ADD', shape: item });
+      dispatch({ type: 'DRAWING/ADD', shape: item });
+    }
   };
 
+  // TODO: check key down event
   const onKeyDown = (event) => {
     switch (event.key) {
       case 'Backspace': {

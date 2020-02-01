@@ -1,23 +1,13 @@
 import React, { useContext } from 'react';
 import { DrawingContext } from '@context/Drawing';
 import useToolsPanel from '@hooks/useToolsPanel';
-import './default.css';
 import defaultShapes from './shapes';
+import './default.css';
 
 const ToolsPanel = ({ onMouseEnter, onMouseLeave }) => {
   const [state, dispatch] = useContext(DrawingContext);
-  const {
-    selected,
-    onShapeClick,
-    onSaveDesk,
-    onLoadDesk,
-    onClearDesk
-  } = useToolsPanel({
-    state,
-    dispatch,
-    onMouseEnter,
-    onMouseLeave
-  });
+  const { selected, onShapeClick, onSaveDesk, onLoadDesk, onClearDesk } =
+    useToolsPanel({ state, dispatch, onMouseEnter, onMouseLeave });
 
   const getShapes = () => {
     return Object.entries(defaultShapes).map(([key, value]) => (

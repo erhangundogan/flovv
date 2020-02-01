@@ -30,14 +30,9 @@
   stroke-width: 1px;
 }
 
-.hover-items {
-  stroke-width: 1px;
-  stroke: #ff565b;
-}
-
 .selector {
   fill: none;
-  stroke-dasharray: 4 6;
+  stroke-dasharray: 3 3;
   stroke: #00a8ff;
   stroke-width: 1px;
   stroke-linecap: square;

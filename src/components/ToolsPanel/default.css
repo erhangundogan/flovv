@@ -19,9 +19,11 @@
 
 .circle {
   background: #f3f3f3 url("/images/circle.svg") no-repeat center;
+  background-size: 20px;
 }
 .rect {
   background: #f3f3f3 url("/images/rectangle.svg") no-repeat center;
+  background-size: 20px
 }
 
 .button {

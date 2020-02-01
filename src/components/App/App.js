@@ -16,7 +16,7 @@ const App = () => {
       <div className="navigation-bar">
         <nav className="navigation">
           <NavLink to="/">Home</NavLink>
-          <NavLink to="desk">Your Desk</NavLink>
+          <NavLink to="desk">Desk</NavLink>
         </nav>
       </div>
       <Router className="container">

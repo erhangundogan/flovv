@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "author": "Erhan Gundogan <erhan.gundogan@gmail.com>",
   "main": "index.js",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rimraf dist",

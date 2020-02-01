@@ -4,12 +4,13 @@ import getMousePosition from '@helpers/getMousePosition';
 const useDraggable = (shapes) => {
   const [dragItem, setDragItem] = useState(null);
   const [resizeItem, setResizeItem] = useState(null);
+  const [resizePoint, setResizePoint] = useState(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    console.log('dragItem:', dragItem);
-    console.log('resizeItem:', resizeItem);
-  }, [dragItem, resizeItem]);
+  // useEffect(() => {
+  //   console.log('dragItem:', dragItem);
+  //   console.log('resizeItem:', resizeItem);
+  // }, [dragItem, resizeItem]);
 
   const setDragPosition = useCallback((event) => {
     const [selectedItem] = shapes.filter((item) => item.props.id === dragItem.id);
@@ -25,37 +26,42 @@ const useDraggable = (shapes) => {
   }, [shapes, dragItem]);
 
   const onMouseDown = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     const selectedItem = event.target;
-    const className = selectedItem.getAttributeNS(null, 'class');
+    const className = selectedItem.getAttribute('class');
 
-    if (className) {
-      if (className.includes('draggable')) {
-        setResizeItem(null);
-        setDragItem(selectedItem);
+    if (className && className.includes('draggable')) {
+      setResizeItem(null);
+      setDragItem(selectedItem);
 
-        const offsetPosition = getMousePosition(event);
-        offsetPosition.x -= parseFloat(selectedItem.getAttributeNS(null, 'x'));
-        offsetPosition.y -= parseFloat(selectedItem.getAttributeNS(null, 'y'));
-        setOffset(offsetPosition);
-      } else if (className.includes('resizable')) {
-        setDragItem(null);
-
-        const parentItemId = selectedItem.attributes['data-parent-id'].value;
-        const resizePoint = selectedItem.attributes['data-resize'].value;
+      const offsetPosition = getMousePosition(event);
+      offsetPosition.x -= parseFloat(selectedItem.getAttribute('x'));
+      offsetPosition.y -= parseFloat(selectedItem.getAttribute('y'));
+      setOffset(offsetPosition);
+    } else if (className && className.includes('resizable')) {
+      setDragItem(null);
+      const parentItemId = selectedItem.attributes['data-parent-id'].value;
+      const currentResizePoint = selectedItem.attributes['data-resize'].value;
+      if (resizeItem === null) {
         setResizeItem(document.getElementById(parentItemId));
-
-        const offsetPosition = getMousePosition(event);
-        offsetPosition.x -= parseFloat(selectedItem.getAttributeNS(null, 'x'));
-        offsetPosition.y -= parseFloat(selectedItem.getAttributeNS(null, 'y'));
-        setOffset(offsetPosition);
+        setResizePoint(currentResizePoint);
+      } else if (parentItemId !== resizeItem.id || resizePoint !== currentResizePoint) {
+        setResizeItem(document.getElementById(parentItemId));
+        setResizePoint(currentResizePoint);
       }
     }
   };
 
   const onMouseUp = (event) => {
     if (dragItem) {
-      setDragPosition(event);
       setDragItem(null);
+      setDragPosition(event);
+    }
+    if (resizeItem) {
+      setResizeItem(null);
+      setResizePoint(null);
     }
   };
 
@@ -63,7 +69,7 @@ const useDraggable = (shapes) => {
     const { x, y } = getMousePosition(event);
     const posX = x - offset.x;
     const posY = y - offset.y;
-    const item = dragItem.getAttributeNS(null, 'item');
+    const item = dragItem.getAttribute('item');
     let xString = 'x';
     let yString = 'y';
 
@@ -73,35 +79,106 @@ const useDraggable = (shapes) => {
     }
 
     if (posX) {
-      dragItem.setAttributeNS(null, xString, posX);
+      dragItem.setAttribute(xString, posX);
     }
     if (posY) {
-      dragItem.setAttributeNS(null, yString, posY);
+      dragItem.setAttribute(yString, posY);
     }
   };
 
+  const resizeHeight = () => {
+  };
+
+  const resizeSquare = () => {
+  };
+
   const resizeMove = (event) => {
-    const { x, y } = getMousePosition(event);
-    const posX = x - offset.x;
-    const posY = y - offset.y;
+    // get bounding box
+    const { x, y, width, height } = resizeItem.getBBox();
+    const { x: posX, y: posY } = getMousePosition(event);
+    const item = resizeItem.getAttribute('item');
 
-    const item = resizeItem.getAttributeNS(null, 'item');
-
-    if (item === 'rect') {
-      if (posX) {
-        resizeItem.setAttributeNS(null, 'width', posX);
+    switch (resizePoint) {
+      case 'n': {
+        const diff = y - posY;
+        if (diff === 0 || diff <= -height) {
+          return;
+        }
+        if (item === 'circle') {
+          const r = +resizeItem.getAttribute('r');
+          resizeItem.setAttribute('r', r + diff);
+          return;
+        }
+        resizeItem.setAttribute('height', height + diff);
+        resizeItem.setAttribute('y', posY);
+        return;
       }
-      if (posY) {
-        resizeItem.setAttributeNS(null, 'height', posY);
+      case 'e': {
+        const diff = posX - (x + width);
+        if (diff === 0 || diff <= -width) {
+          return;
+        }
+        if (item === 'circle') {
+          const r = +resizeItem.getAttribute('r');
+          resizeItem.setAttribute('r', r + diff);
+          return;
+        }
+        resizeItem.setAttribute('width', width + diff);
+        return;
       }
-    } else if (item === 'circle') {
-      if (posX) {
-        resizeItem.setAttributeNS(null, 'r', posX);
+      case 's': {
+        const diff = posY - (y + height);
+        if (diff === 0 || diff <= -height) {
+          return;
+        }
+        if (item === 'circle') {
+          const r = +resizeItem.getAttribute('r');
+          resizeItem.setAttribute('r', r + diff);
+          return;
+        }
+        resizeItem.setAttribute('height', height + diff);
+        return;
       }
-      if (posY) {
-        resizeItem.setAttributeNS(null, 'r', posY);
+      case 'w': {
+        const diff = x - posX;
+        if (diff === 0 || diff <= -width) {
+          return;
+        }
+        if (item === 'circle') {
+          const r = +resizeItem.getAttribute('r');
+          resizeItem.setAttribute('r', r + diff);
+          return;
+        }
+        resizeItem.setAttribute('width', width + diff);
+        resizeItem.setAttribute('x', posX);
+        return;
       }
     }
+
+    // const { x, y } = getMousePosition(event);
+    // console.log('{ x, y }', x, y);
+    // const posX = x - offset.x;
+    // const posY = y - offset.y;
+    // console.log('posX', posX);
+    // console.log('posY', posY);
+    //
+    // const item = resizeItem.getAttribute('item');
+
+    // if (item === 'rect') {
+    //   if (posX) {
+    //     resizeItem.setAttribute('width', posX);
+    //   }
+    //   if (posY) {
+    //     resizeItem.setAttribute('height', posY);
+    //   }
+    // } else if (item === 'circle') {
+    //   if (posX) {
+    //     resizeItem.setAttribute('r', posX);
+    //   }
+    //   if (posY) {
+    //     resizeItem.setAttribute('r', posY);
+    //   }
+    // }
   };
 
   const onMouseMove = (event) => {

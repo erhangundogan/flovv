@@ -4,9 +4,7 @@ const initialDrawingState = {
   desk: {
     id: nanoid()
   },
-  tools: {
-    selected: 'rect'
-  },
+  tools: {},
   shapes: []
 };
 
