@@ -8,7 +8,7 @@ const Drawer = ({ items, hoverId }) => {
         <g key={ item.props.id } className={ hoverId === item.props.id ? 'hover-items' : '' }>
           { createSVGItem(item) }
         </g>
-      )
+      );
     })
   );
 };

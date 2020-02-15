@@ -6,8 +6,12 @@ import './default.css';
 
 const ToolsPanel = ({ onMouseEnter, onMouseLeave }) => {
   const [state, dispatch] = useContext(DrawingContext);
-  const { selected, onShapeClick, onSaveDesk, onLoadDesk, onClearDesk } =
-    useToolsPanel({ state, dispatch, onMouseEnter, onMouseLeave });
+  const { selected, onShapeClick, onSaveDesk, onLoadDesk, onClearDesk } = useToolsPanel({
+    state,
+    dispatch,
+    onMouseEnter,
+    onMouseLeave,
+  });
 
   const getShapes = () => {
     return Object.entries(defaultShapes).map(([key, value]) => (
@@ -16,7 +20,7 @@ const ToolsPanel = ({ onMouseEnter, onMouseLeave }) => {
         type="button"
         key={ key }
         data-item={ key }
-        className={ `button icon ${value.className} ${key === selected && 'selected'}` }
+        className={ `button icon ${ value.className } ${ key === selected && 'selected' }` }
         onClick={ onShapeClick }
       />
     ));

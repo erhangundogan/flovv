@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import getMousePosition from '@helpers/getMousePosition';
 
 const useDraggable = (shapes) => {
@@ -6,11 +6,6 @@ const useDraggable = (shapes) => {
   const [resizeItem, setResizeItem] = useState(null);
   const [resizePoint, setResizePoint] = useState(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-
-  // useEffect(() => {
-  //   console.log('dragItem:', dragItem);
-  //   console.log('resizeItem:', resizeItem);
-  // }, [dragItem, resizeItem]);
 
   const setDragPosition = useCallback((event) => {
     const [selectedItem] = shapes.filter((item) => item.props.id === dragItem.id);
@@ -151,34 +146,9 @@ const useDraggable = (shapes) => {
         }
         resizeItem.setAttribute('width', width + diff);
         resizeItem.setAttribute('x', posX);
-        return;
       }
+      // no default
     }
-
-    // const { x, y } = getMousePosition(event);
-    // console.log('{ x, y }', x, y);
-    // const posX = x - offset.x;
-    // const posY = y - offset.y;
-    // console.log('posX', posX);
-    // console.log('posY', posY);
-    //
-    // const item = resizeItem.getAttribute('item');
-
-    // if (item === 'rect') {
-    //   if (posX) {
-    //     resizeItem.setAttribute('width', posX);
-    //   }
-    //   if (posY) {
-    //     resizeItem.setAttribute('height', posY);
-    //   }
-    // } else if (item === 'circle') {
-    //   if (posX) {
-    //     resizeItem.setAttribute('r', posX);
-    //   }
-    //   if (posY) {
-    //     resizeItem.setAttribute('r', posY);
-    //   }
-    // }
   };
 
   const onMouseMove = (event) => {
@@ -192,7 +162,7 @@ const useDraggable = (shapes) => {
   return {
     onMouseDown,
     onMouseMove,
-    onMouseUp
+    onMouseUp,
   };
 };
 
