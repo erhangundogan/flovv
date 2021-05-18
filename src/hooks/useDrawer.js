@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import defaults from '@constants/defaults';
 import getMousePosition from '@helpers/getMousePosition';
 

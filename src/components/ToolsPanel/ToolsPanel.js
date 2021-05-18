@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { DrawingContext } from '@context/Drawing';
 import useToolsPanel from '@hooks/useToolsPanel';
 import defaultShapes from './shapes';
-import './default.css';
+import './ToolsPanel.css';
 
 const ToolsPanel = ({ onMouseEnter, onMouseLeave }) => {
   const [state, dispatch] = useContext(DrawingContext);

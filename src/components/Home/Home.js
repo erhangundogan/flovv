@@ -1,12 +1,15 @@
 import React from 'react';
-import './default.css';
+import PageContainer from '../PageContainer/PageContainer';
+import './Home.css';
 
 const Home = () => {
   return (
-    <div className="home">
-      <h1>Home</h1>
-      <p>Please choose <strong>Desk</strong> below to start drawing.</p>
-    </div>
+    <PageContainer>
+      <div className="home">
+        <h1>Home</h1>
+        <p>Please choose <strong>Board</strong> to start drawing.</p>
+      </div>
+    </PageContainer>
   );
 };
 

@@ -3,9 +3,9 @@ import useDrawer from '@hooks/useDrawer';
 import useDraggable from '@hooks/useDraggable';
 import { DrawingContext, drawingReducer, initialDrawingState } from '@context/Drawing';
 import { Drawer, BoundingBoxSelector, ToolsPanel } from '@components';
-import './default.css';
+import './Board.css';
 
-const Desk = () => {
+const Board = () => {
   const [state, dispatch] = useReducer(drawingReducer, initialDrawingState);
   const {
     desk: { id: deskId },
@@ -38,7 +38,7 @@ const Desk = () => {
           onMouseDown={ onMouseDown }
           onMouseMove={ onMouseMove }
           onMouseUp={ onMouseUp }
-          className="desk"
+          className="board"
           tabIndex="0"
           preserveAspectRatio="xMidYMid meet"
         >
@@ -52,4 +52,4 @@ const Desk = () => {
   );
 };
 
-export default Desk;
+export default Board;

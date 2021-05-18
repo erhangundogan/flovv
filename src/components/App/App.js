@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Link } from '@reach/router';
-import { Home, Desk } from '@components';
-import './default.css';
+import { Home, Board } from '@components';
+import './App.css';
 
 const NavLink = (props) => (
   <Link
@@ -16,12 +16,12 @@ const App = () => {
       <div className="navigation-bar">
         <nav className="navigation">
           <NavLink to="/">Home</NavLink>
-          <NavLink to="desk">Desk</NavLink>
+          <NavLink to="board">Board</NavLink>
         </nav>
       </div>
       <Router className="container">
         <Home path="/" />
-        <Desk path="desk" />
+        <Board path="board" />
       </Router>
     </>
   );

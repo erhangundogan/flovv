@@ -1,7 +1,7 @@
 .navigation-bar {
   position: fixed;
   left: 0;
-  bottom: 0;
+  top: 0;
   right: 0;
   background-color: cornflowerblue;
   z-index: 1;

@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, argv) => {
-  const { mode, host } = argv;
+  const { mode, host = 'localhost' } = argv;
   process.env.NODE_ENV = env || mode;
   const isProduction = process.env.NODE_ENV === 'production';
 
